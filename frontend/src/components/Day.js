@@ -18,7 +18,7 @@ export default function Day({ day, rowIdx }) {
     useEffect(() => {
         const events = savedEvents.filter(
             (evt) =>
-                dayjs(evt.day).format("DD-MM-YY") === day.format("DD-MM-YY")
+                dayjs(Number(evt.day)).format("DD-MM-YY") === day.format("DD-MM-YY")
         );
         setDayEvents(events);
     }, [savedEvents, day]);

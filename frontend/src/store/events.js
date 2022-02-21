@@ -21,7 +21,9 @@ export function eventsReducer(state = initialState, action) {
             return { ...state, daySelected: action.payload };
         case 'events/setShowModal':
             return { ...state, showEventModal: action.payload };
-        case 'events/setNewEvent':
+        case 'events/setEvents': 
+            return { ...state, savedEvents: [...state.savedEvents, ...action.payload] };
+        case 'events/setNewEvent': 
             return { ...state, savedEvents: [...state.savedEvents, action.payload] };
         case 'events/setSelectedEvent':
             return { ...state, selectedEvent: action.payload };

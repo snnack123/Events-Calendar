@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { url, globalRequestParameters } from '../utils'
 
 export default function EventModal() {
   const dispatch = useDispatch();
   const daySelected = useSelector((state) => state.events.daySelected);
+  const thisUser = useSelector((state) => state.users.thisUser);
   const selectedEvent = useSelector((state) => state.events.selectedEvent);
+  const user = useSelector((state) => state.users.thisUser);
   const [title, setTitle] = useState(
     selectedEvent !== null ? selectedEvent.title : ""
   );
@@ -35,18 +38,54 @@ export default function EventModal() {
     if (selectedEvent !== null) {
       new_event.day = selectedEvent.day;
       new_event.id = selectedEvent.id;
-      console.log(new_event);
-      dispatch({ type: "events/updateEvent", payload: new_event });
+
+      let requestParameters = { ...globalRequestParameters };
+      requestParameters.method = "PUT";
+      requestParameters.body = JSON.stringify(new_event);
+
+      fetch(url + "event/" + selectedEvent.id, requestParameters)
+      .then(res => res.json()
+      .then(res => {
+        if(res.updated === 1) {
+          dispatch({ type: "events/updateEvent", payload: new_event });
+        }
+      }))
     } else {
       new_event.day = daySelected.valueOf();
       new_event.id = Date.now();
-      dispatch({ type: "events/setNewEvent", payload: new_event });
+      new_event.user_id = user.id;
+
+      let requestParameters = { ...globalRequestParameters };
+      requestParameters.method = "POST";
+      requestParameters.body = JSON.stringify(new_event);
+
+      fetch(url + "event", requestParameters)
+      .then((res) => res.json()
+      .then((res) => {
+        if(res.added === 1) {
+          dispatch({ type: "events/setNewEvent", payload: new_event });
+        }
+        console.log(res.msg);
+      }))
     }
     setShowModal();
   }
 
   function deleteEvent() {
-    dispatch({ type: "events/deleteEvent", payload: selectedEvent.id });
+    let deleteId = selectedEvent.id;
+
+    let requestParameters = { ...globalRequestParameters };
+    requestParameters.method = "DELETE";
+
+    fetch(url + "event/" + deleteId, requestParameters)
+    .then(res => res.json()
+    .then(res => {
+      console.log(res.msg);
+      if(res.deleted === 1) {
+        dispatch({ type: "events/deleteEvent", payload: selectedEvent.id });
+      }
+    }))
+    
     setShowModal();
   }
 

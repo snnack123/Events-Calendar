@@ -7,6 +7,7 @@ const e = require('express');
 var jwt = require("../backend/node_modules/jsonwebtoken");
 
 const Users = db.users;
+const Events = db.events;
 
 const bcrypt = require("bcrypt");
 const { response } = require('express');
@@ -72,6 +73,7 @@ app.post('/login', async (req, res) => {
                                 );
                                 response.token = token;
                                 response.msg = "Ai dreptul sa accesezi resursele!";
+                                response.user = user;
                                 res.send(response);
                             } else {
                                 response.msg = 'Trebuie sa activezi contul!'
@@ -131,4 +133,87 @@ app.put("/activeAccount/:id", (req, res) => {
         })
 });
 
+app.post("/event", async (req, res) => {
 
+    let new_event = {
+        title: req.body.title,
+        description: req.body.description,
+        label: req.body.label,
+        day: req.body.day,
+        user_id: req.body.user_id,
+    };
+    
+    let response = {};
+
+    Events.create(new_event)
+        .then(() => {
+            response.msg = 'Adaugat cu succes!';
+            response.added = 1;
+            res.send(response);
+        })
+        .catch((err) => {
+            response.msg = err;
+            response.added = 0;
+            res.send(response);
+        });
+
+});
+
+app.post("/allEventsForUser", (req, res) => {
+  let id = req.body.id;
+
+  Events.findAll({ where: { user_id: id } })
+    .then((data) => {
+      res.send(data);
+      console.log(data);
+    })
+    .catch((err) => console.log(err));
+});
+
+app.delete("/event/:id", (req, res) => {
+    const id = req.params.id;
+
+    let response = {};
+
+    Events.destroy({
+            where: { id: id },
+        })
+        .then((num) => {
+            if (num == 1) {
+                response.msg = "Evenimentul a fost sters cu succes!";
+                response.deleted = 1;
+                res.send(response);
+            } else {
+                response.msg= `Nu pot sterge evenimentul cu id=${id}.`;
+                response.deleted = 0;
+                res.send(response);
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
+
+app.put("/event/:id", (req, res) => {
+    const id = req.params.id;
+    Events.update(req.body, {
+            where: { id: id },
+        })
+        .then((num) => {
+            let response = {};
+            if (num == 1) {
+                response.updated = 1;
+                response.msg = "Informatiile au fost actualizate cu succes.";
+                res.send(response);
+            } else {
+                response.updated = 0;
+                response.msg = `Nu pot actualiza informatiile pentru angajatul cu id=${id}.`;
+                res.send(response);
+            }
+        })
+        .catch((err) => {
+            res.status(500).send({
+                message: "Eroare actualizare date pentru id=" + id,
+            });
+        });
+});
