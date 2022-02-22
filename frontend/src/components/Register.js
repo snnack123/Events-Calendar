@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { url, globalRequestParameters } from '../utils'
+import { url_users, globalRequestParameters } from '../utils'
 import emailjs from '@emailjs/browser';
 
 const Register = () => {
@@ -52,7 +52,7 @@ const Register = () => {
         requestParameters.method = "POST";
         requestParameters.body = JSON.stringify(checkEmail);
 
-        fetch(url + "checkExistAccount", requestParameters)
+        fetch(url_users + "checkExistAccount", requestParameters)
             .then(res => res.json()
                 .then(res => {
                     console.log(res.exist);
@@ -86,7 +86,7 @@ const Register = () => {
 
                                 requestParameters.body = JSON.stringify(new_user);
 
-                                fetch(url + "add-user", requestParameters)
+                                fetch(url_users + "add-user", requestParameters)
                                     .then((res) => {
                                         console.log(res);
                                         document.getElementById('createAccount').style.display = 'none';
@@ -114,10 +114,10 @@ const Register = () => {
 
     return (
         <div className='create'>
-            <h1>Inregistrare cont utilizator</h1>
-            <p style={{ textAlign: 'left', fontSize: '90%' }}>Toate campurile marcate cu <span className="star">*</span> sunt obligatorii</p>
+            <h1>User account registration</h1>
+            <p style={{ textAlign: 'left', fontSize: '90%' }}>All fields marked with <span className="star">*</span> are mandatory</p>
             <form onSubmit={register} id='registerUser'>
-                <label>Numele complet<span className="star">*</span>:</label>
+                <label>Full name<span className="star">*</span>:</label>
                 <input
                     type='text'
                     required
@@ -125,7 +125,7 @@ const Register = () => {
                     name='name'
                     onChange={(e) => setName(e.target.value)}
                 />
-                <label>Varsta<span className="star">*</span>:</label>
+                <label>Years old<span className="star">*</span>:</label>
                 <input
                     type='text'
                     required
@@ -133,7 +133,7 @@ const Register = () => {
                     value={yearsOld}
                     onChange={(e) => setYearsOld(e.target.value)}
                 />
-                <label>Adresa Email<span className="star">*</span>:</label>
+                <label>Email<span className="star">*</span>:</label>
                 <input
                     type='email'
                     required
@@ -141,12 +141,12 @@ const Register = () => {
                     name='email'
                     onChange={(e) => setEmail(e.target.value)}
                 />
-                <label>Stabiliti parola<span className="star">*</span>:</label>
+                <label>Password<span className="star">*</span>:</label>
                 <br></br>
                 <ul style={{ textAlign: 'left', fontSize: '85%', fontWeight: 'bold' }}>
-                    <li id='passLength'>Intre 6 - 20 caractere</li>
-                    <li id='passCapital'>Cel putin o litera mare</li>
-                    <li id='passSpecial'>Cel putin un semn</li>
+                    <li id='passLength'>Between 6 - 20 characters</li>
+                    <li id='passCapital'>One capital letter</li>
+                    <li id='passSpecial'>One special sign</li>
                 </ul>
                 <input
                     type='password'
@@ -154,7 +154,7 @@ const Register = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <label>Repetati parola<span className="star">*</span>:</label>
+                <label>Repeat password<span className="star">*</span>:</label>
                 <input
                     type='password'
                     required
@@ -166,10 +166,10 @@ const Register = () => {
                     name='cod'
                     value={random_number}
                 ></input>
-                <button id='createAccount'>Creeaza utilizator</button>
+                <button id='createAccount'>Create user</button>
                 <p id="error" style={{ fontSize: '110%' }}></p>
                 <br></br>
-                <p style={{ textAlign: 'left' }}>By clicking "Creeaza utilizator" you are agreeing to our</p>
+                <p style={{ textAlign: 'left' }}>By clicking "Create user" you are agreeing to our</p>
                 <p style={{ textAlign: 'left' }}><a href='#'>Privacy Policy</a> & <a href='#'>Terms of Service</a></p>
             </form>
         </div>

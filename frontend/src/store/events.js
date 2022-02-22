@@ -33,6 +33,17 @@ export function eventsReducer(state = initialState, action) {
             return { ...state, savedEvents: [...state.savedEvents.filter(item => item.id !== action.payload)] };
         case 'events/setLabelsEvents':
             return { ...state, labelsEvents: action.payload };
+        case 'events/clearAll':
+            return {
+                monthIndex: dayjs().month(),
+                compare: dayjs().month(),
+                smallCalendarMonth: 0,
+                daySelected: dayjs(),
+                showEventModal: false,
+                savedEvents: [],
+                selectedEvent: null,
+                labelsEvents: [],
+            };
         default:
             return state;
     }
@@ -47,3 +58,9 @@ function updateOne(array, obj) {
         }
     })
 }
+
+// function clear(array) {
+//     while (array.length > 0) {
+//         array.pop();
+//     }
+// }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { url, globalRequestParameters } from "../utils";
+import { url_users, url_events, globalRequestParameters } from "../utils";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
@@ -32,7 +32,7 @@ const Login = () => {
     requestParameters.method = "POST";
     requestParameters.body = JSON.stringify(data);
 
-    fetch(url + "login", requestParameters).then((res) =>
+    fetch(url_users + "login", requestParameters).then((res) =>
       res.json().then((res) => {
         if (res.token) {
           localStorage.setItem("token", res.token);
@@ -47,13 +47,13 @@ const Login = () => {
           let requestParameters = { ...globalRequestParameters };
           requestParameters.method = "POST";
           requestParameters.body = JSON.stringify(userId);
-          fetch(url + "allEventsForUser", requestParameters)
+          fetch(url_events + "allEventsForUser", requestParameters)
             .then((res) => res.json()
               .then(res => {
                 dispatch({ type: "events/setEvents", payload: res });
               }))
 
-          history.push("/");
+          history.push("/calendar");
         } else if (res.msg === "Trebuie sa activezi contul!") {
           document.getElementById("hideEmailPass").style.display = "none";
           document.getElementById("showCheckCode").style.display = "block";
@@ -74,14 +74,14 @@ const Login = () => {
       requestParameters.method = "PUT";
       requestParameters.body = JSON.stringify(activate);
 
-      fetch(url + "activeAccount/" + thisUser.id, requestParameters).then(
+      fetch(url_users + "activeAccount/" + thisUser.id, requestParameters).then(
         (res) =>
           res.json().then((res) => {
             if (res.token) {
               localStorage.setItem("token", res.token);
               setLogIn();
               setActivated();
-              history.push("/");
+              history.push("/calendar");
             } else {
               console.log(res);
             }
@@ -96,18 +96,18 @@ const Login = () => {
 
   return (
     <div className="create">
-      <h1>Autentificare utilizator</h1>
+      <h1>User login page</h1>
       <div id="hideEmailPass">
         <form onSubmit={login}>
           <div>
-            <label>Adresa Email:</label>
+            <label>Email Address:</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <label>Scrieti parola:</label>
+            <label>Password:</label>
             <input
               type="password"
               required
@@ -115,21 +115,21 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button id="btnAuth">Autentificare</button>
+          <button id="btnAuth">Login</button>
           <p id="error"></p>
         </form>
       </div>
       <div id="showCheckCode" style={{ display: "none" }}>
         <form onSubmit={checkMyCode}>
           <div>
-            <label>Codul de verificare primit pe mail:</label>
+            <label>Verification code received by email:</label>
             <input
               type="text"
               value={checkCode}
               onChange={(e) => setCheckCode(e.target.value)}
             />
           </div>
-          <button id="btnActivate">Activare cont</button>
+          <button id="btnActivate">Account activation</button>
           <p id="error_activate"></p>
         </form>
       </div>

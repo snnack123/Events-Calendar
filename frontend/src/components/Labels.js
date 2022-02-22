@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -22,9 +21,10 @@ export default function Labels() {
 
   useEffect(() => {
     let new_labels = [...new Set(savedEvents.map((evt) => evt.label))];
-    // console.log(savedEvents.map(evt => dayjs(Number(evt.day)).month()));
     dispatch({ type: 'events/setLabelsEvents', payload: new_labels });
   }, [savedEvents])
+
+
   return (
     <div>
       <p className='text-gray-500 font-bold mt-3 block'>Labels</p>

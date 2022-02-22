@@ -1,4 +1,5 @@
-let url = "http://localhost:5000/";
+let url_events = "http://localhost:5000/events/";
+let url_users = "http://localhost:5000/users/";
 
 let globalRequestParameters = {
     method: "GET",
@@ -13,4 +14,5 @@ let globalRequestParameters = {
 };
 
 module.exports.globalRequestParameters = globalRequestParameters;
-module.exports.url = url;
+module.exports.url_events = url_events;
+module.exports.url_users = url_users;

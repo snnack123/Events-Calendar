@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { url, globalRequestParameters } from '../utils'
+import { url_events, globalRequestParameters } from '../utils'
 
 export default function EventModal() {
   const dispatch = useDispatch();
@@ -44,7 +44,7 @@ export default function EventModal() {
       requestParameters.headers.Authorization = token;
       requestParameters.body = JSON.stringify(new_event);
 
-      fetch(url + "event/" + selectedEvent.id, requestParameters)
+      fetch(url_events + "event/" + selectedEvent.id, requestParameters)
         .then(res => res.json()
           .then(res => {
             if (res.message === 'Decoding error!' || res.message === 'Your token expired!') {
@@ -65,7 +65,7 @@ export default function EventModal() {
       requestParameters.headers.Authorization = token;
       requestParameters.body = JSON.stringify(new_event);
 
-      fetch(url + "event", requestParameters)
+      fetch(url_events + "event", requestParameters)
         .then((res) => res.json()
           .then((res) => {
             if (res.message === 'Decoding error!' || res.message === 'Your token expired!') {
@@ -91,7 +91,7 @@ export default function EventModal() {
     requestParameters.headers.Authorization = token;
     requestParameters.method = "DELETE";
 
-    fetch(url + "event/" + deleteId, requestParameters)
+    fetch(url_events + "event/" + deleteId, requestParameters)
       .then(res => res.json()
         .then(res => {
           if (res.message === 'Decoding error!' || res.message === 'Your token expired!') {
