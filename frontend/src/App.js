@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Home from './components/Home'
 import NavBar from './Navbar'
 import Register from './components/Register'
@@ -7,22 +8,25 @@ import React from 'react';
 import BigCalendar from './components/BigCalendar';
 
 function App() {
+
+  const loggedIn = useSelector((state) => state.users.loggedIn);
+
   return (
     <Router>
       <div className="App">
         <NavBar />
         <Switch>
           <Route exact path='/'>
-            <Home />
+            {loggedIn ? <Redirect to='/calendar' /> : <Home />}
           </Route>
           <Route path='/register'>
-            <Register />
+            {loggedIn ? <Redirect to='/calendar' /> : <Register />}
           </Route>
           <Route path='/calendar'>
-            <BigCalendar />
+            {loggedIn ? <BigCalendar /> : <Redirect to='/' />}
           </Route>
           <Route path='/login'>
-            <Login />
+            {loggedIn ? <Redirect to='/calendar' /> : <Login />}
           </Route>
         </Switch>
       </div>
