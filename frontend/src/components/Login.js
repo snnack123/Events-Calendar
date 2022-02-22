@@ -42,19 +42,16 @@ const Login = () => {
           setLogIn();
           addUser();
 
-          let userId = {id: res.user.id}
+          let userId = { id: res.user.id }
 
           let requestParameters = { ...globalRequestParameters };
           requestParameters.method = "POST";
           requestParameters.body = JSON.stringify(userId);
           fetch(url + "allEventsForUser", requestParameters)
-          .then((res) => res.json()
-          .then(res => {
-            // res.forEach((element) => {
-            //   console.log(element);
-              dispatch({ type: "events/setEvents", payload: res });
-            // })
-          }))
+            .then((res) => res.json()
+              .then(res => {
+                dispatch({ type: "events/setEvents", payload: res });
+              }))
 
           history.push("/");
         } else if (res.msg === "Trebuie sa activezi contul!") {

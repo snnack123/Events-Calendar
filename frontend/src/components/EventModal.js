@@ -5,7 +5,6 @@ import { url, globalRequestParameters } from '../utils'
 export default function EventModal() {
   const dispatch = useDispatch();
   const daySelected = useSelector((state) => state.events.daySelected);
-  const thisUser = useSelector((state) => state.users.thisUser);
   const selectedEvent = useSelector((state) => state.events.selectedEvent);
   const user = useSelector((state) => state.users.thisUser);
   const [title, setTitle] = useState(
@@ -39,53 +38,72 @@ export default function EventModal() {
       new_event.day = selectedEvent.day;
       new_event.id = selectedEvent.id;
 
+      let token = window.localStorage.getItem("token");
       let requestParameters = { ...globalRequestParameters };
       requestParameters.method = "PUT";
+      requestParameters.headers.Authorization = token;
       requestParameters.body = JSON.stringify(new_event);
 
       fetch(url + "event/" + selectedEvent.id, requestParameters)
-      .then(res => res.json()
-      .then(res => {
-        if(res.updated === 1) {
-          dispatch({ type: "events/updateEvent", payload: new_event });
-        }
-      }))
+        .then(res => res.json()
+          .then(res => {
+            if (res.message === 'Decoding error!' || res.message === 'Your token expired!') {
+              console.log("Probleme cu token-ul la adaugare!");
+            } else {
+              if (res.updated === 1) {
+                dispatch({ type: "events/updateEvent", payload: new_event });
+              }
+            }
+          }))
     } else {
       new_event.day = daySelected.valueOf();
-      new_event.id = Date.now();
       new_event.user_id = user.id;
 
+      let token = window.localStorage.getItem("token");
       let requestParameters = { ...globalRequestParameters };
       requestParameters.method = "POST";
+      requestParameters.headers.Authorization = token;
       requestParameters.body = JSON.stringify(new_event);
 
       fetch(url + "event", requestParameters)
-      .then((res) => res.json()
-      .then((res) => {
-        if(res.added === 1) {
-          dispatch({ type: "events/setNewEvent", payload: new_event });
-        }
-        console.log(res.msg);
-      }))
+        .then((res) => res.json()
+          .then((res) => {
+            if (res.message === 'Decoding error!' || res.message === 'Your token expired!') {
+              console.log("Probleme cu token-ul la adaugare!");
+            } else {
+              if (res.added === 1) {
+                new_event.id = res.id;
+                dispatch({ type: "events/setNewEvent", payload: new_event });
+              }
+              console.log(res.msg);
+            }
+          }))
     }
     setShowModal();
   }
 
   function deleteEvent() {
     let deleteId = selectedEvent.id;
+    console.log(selectedEvent);
 
+    let token = window.localStorage.getItem("token");
     let requestParameters = { ...globalRequestParameters };
+    requestParameters.headers.Authorization = token;
     requestParameters.method = "DELETE";
 
     fetch(url + "event/" + deleteId, requestParameters)
-    .then(res => res.json()
-    .then(res => {
-      console.log(res.msg);
-      if(res.deleted === 1) {
-        dispatch({ type: "events/deleteEvent", payload: selectedEvent.id });
-      }
-    }))
-    
+      .then(res => res.json()
+        .then(res => {
+          if (res.message === 'Decoding error!' || res.message === 'Your token expired!') {
+            console.log("Probleme cu token-ul la adaugare!");
+          } else {
+            console.log(res.msg);
+            if (res.deleted === 1) {
+              dispatch({ type: "events/deleteEvent", payload: selectedEvent.id });
+            }
+          }
+        }))
+
     setShowModal();
   }
 
@@ -97,10 +115,10 @@ export default function EventModal() {
             drag_handle
           </span>
           <div className="">
-              {selectedEvent && 
-                <span className="material-icons-outlined text-gray-400 cursor-pointer" onClick={deleteEvent}>
-                    delete
-                </span>}
+            {selectedEvent &&
+              <span className="material-icons-outlined text-gray-400 cursor-pointer" onClick={deleteEvent}>
+                delete
+              </span>}
             <button onClick={setShowModal}>
               <span className="material-icons-outlined text-gray-400">
                 close
@@ -161,13 +179,24 @@ export default function EventModal() {
           </div>
         </div>
         <footer className="flex justify-end border-t p-3 mt-5 ">
-          <button
-            type="button"
-            className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded text-white"
-            onClick={saveEvent}
-          >
-            Save
-          </button>
+          {selectedEvent === null &&
+            <button
+              type="button"
+              className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded text-white"
+              onClick={saveEvent}
+            >
+              Save
+            </button>
+          }
+          {selectedEvent !== null &&
+            <button
+              type="button"
+              className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded text-white"
+              onClick={saveEvent}
+            >
+              Update Event
+            </button>
+          }
         </footer>
       </form>
     </div>

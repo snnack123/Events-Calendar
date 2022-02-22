@@ -24,6 +24,29 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
 
+
+function checkAuthorization(req, res, next) {
+    const bearerHeader = req.headers["authorization"];
+
+    if (typeof bearerHeader !== "undefined") {
+        req.token = bearerHeader;
+
+        jwt.verify(req.token, secret, (err, decoded) => {
+            if (err) {
+                if (err.expiredAt) {
+                    res.json({ message: "Your token expired!" });
+                } else {
+                    res.json({ message: "Decoding error!" });
+                }
+            } else {
+                next();
+            }
+        });
+    } else {
+        res.json({ message: "Missing token!" });
+    }
+}
+
 app.post("/add-user", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
@@ -133,7 +156,7 @@ app.put("/activeAccount/:id", (req, res) => {
         })
 });
 
-app.post("/event", async (req, res) => {
+app.post("/event", checkAuthorization, async (req, res) => {
 
     let new_event = {
         title: req.body.title,
@@ -142,13 +165,14 @@ app.post("/event", async (req, res) => {
         day: req.body.day,
         user_id: req.body.user_id,
     };
-    
+
     let response = {};
 
     Events.create(new_event)
-        .then(() => {
+        .then((event) => {
             response.msg = 'Adaugat cu succes!';
             response.added = 1;
+            response.id = event.null;
             res.send(response);
         })
         .catch((err) => {
@@ -160,31 +184,30 @@ app.post("/event", async (req, res) => {
 });
 
 app.post("/allEventsForUser", (req, res) => {
-  let id = req.body.id;
+    let id = req.body.id;
 
-  Events.findAll({ where: { user_id: id } })
-    .then((data) => {
-      res.send(data);
-      console.log(data);
-    })
-    .catch((err) => console.log(err));
+    Events.findAll({ where: { user_id: id } })
+        .then((data) => {
+            res.send(data);
+        })
+        .catch((err) => console.log(err));
 });
 
-app.delete("/event/:id", (req, res) => {
+app.delete("/event/:id", checkAuthorization, (req, res) => {
     const id = req.params.id;
 
     let response = {};
 
     Events.destroy({
-            where: { id: id },
-        })
+        where: { id: id },
+    })
         .then((num) => {
             if (num == 1) {
                 response.msg = "Evenimentul a fost sters cu succes!";
                 response.deleted = 1;
                 res.send(response);
             } else {
-                response.msg= `Nu pot sterge evenimentul cu id=${id}.`;
+                response.msg = `Nu pot sterge evenimentul cu id=${id}.`;
                 response.deleted = 0;
                 res.send(response);
             }
@@ -194,11 +217,11 @@ app.delete("/event/:id", (req, res) => {
         });
 });
 
-app.put("/event/:id", (req, res) => {
+app.put("/event/:id", checkAuthorization, (req, res) => {
     const id = req.params.id;
     Events.update(req.body, {
-            where: { id: id },
-        })
+        where: { id: id },
+    })
         .then((num) => {
             let response = {};
             if (num == 1) {
@@ -217,3 +240,4 @@ app.put("/event/:id", (req, res) => {
             });
         });
 });
+
