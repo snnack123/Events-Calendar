@@ -12,11 +12,11 @@ function App() {
   const dispatch = useDispatch();
   const loggedIn = useSelector((state) => state.users.loggedIn);
   const [check_account, setCheckAccount] = useState(0);
+  const [test, setTest] = useState(false);
 
   useEffect(() => {
     if (check_account === 0) {
         setCheckAccount(1);
-        if (performance.navigation.type === 1) {
             let token = localStorage.getItem('token');
       
             if(token) {
@@ -34,6 +34,7 @@ function App() {
                   alert(res.message);
                 } else {
                   dispatch({ type: 'users/loggedIn', payload: true });
+                  setTest(true);
                   let email = {email: res.email};
                   requestParameters.body = JSON.stringify(email);
       
@@ -53,8 +54,6 @@ function App() {
                         .then(res => {
                             dispatch({ type: "events/setEvents", payload: res });
                         }))
-
-
                     } else {
                       console.log(res.msg);
                     }
@@ -62,22 +61,40 @@ function App() {
                 }
               }))
             }
-          }
+          
     }
   });
-  console.log(loggedIn);
 
   return (
     <Router>
       <div className="App">
         <NavBar />
-        <Switch>
-          <Route exact path='/' component={loggedIn ? BigCalendar : Home} />
-          <Route exact path='/register' component={loggedIn ? BigCalendar : Register} />
-          <Route exact path='/calendar' component={loggedIn ? BigCalendar : Home} />
-          <Route exact path='/login' component={loggedIn ? BigCalendar :  Login}/>
-          <Route path='*' component={Home} />
-        </Switch>
+        {test === true && (
+          <Switch>
+            <Route exact path='/' component={BigCalendar} >
+              <Redirect to="/calendar" />
+            </Route>
+            <Route exact path='/register' component={BigCalendar} >
+              <Redirect to="/calendar" />
+            </Route>
+            <Route exact path='/calendar' component={BigCalendar} />
+            <Route exact path='/login' component={BigCalendar}>
+              <Redirect to="/calendar" />
+            </Route>
+            <Route path='*' component={BigCalendar} ></Route>
+          </Switch>
+        )}
+        {test === false && (
+          <Switch>
+            <Route exact path='/' component={Home} />
+            <Route exact path='/register' component={Register} />
+            <Route exact path='/calendar' component={Home} >
+              <Redirect to="/" />
+            </Route>
+            <Route exact path='/login' component={Login} />
+            <Route path='*' component={Home} />
+          </Switch>
+        )}
       </div>
     </Router>
   );
