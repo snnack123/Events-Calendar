@@ -75,6 +75,27 @@ router.post('/login', async (req, res) => {
         .catch((err) => console.log(err));
 })
 
+router.post('/getAccount', async (req,res) => {
+    let email = req.body.email;
+    
+    Users.findOne({ where: { email: email } })
+    .then((user) => {
+        let response = {};
+        if (String(user) === 'null') {
+            response.msg = 'Nu exista acest utilizator';
+            response.found = 0;
+            res.send(response);
+        }
+        else {
+            response.msg = 'Acest utilizator exista!';
+            response.user = user;
+            response.found = 1;
+            res.send(response);
+        }      
+    })
+    .catch((err) => console.log(err));
+})
+
 router.post('/checkExistAccount', async (req, res) => {
     let data = req.body;
     let userFound = {};

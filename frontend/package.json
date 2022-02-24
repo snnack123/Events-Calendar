@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@emailjs/browser": "^3.4.0",
+    "@react-native-async-storage/async-storage": "^1.16.1",
     "@tailwindcss/forms": "^0.4.0",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.2",

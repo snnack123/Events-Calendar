@@ -28,6 +28,26 @@ function checkAuthorization(req, res, next) {
     }
 }
 
+router.post('/check', (req,res) => {
+    let token = req.body.token;
+
+    if (typeof token !== "undefined") {
+        jwt.verify(token, secret, (err, decoded) => {
+            if (err) {
+                if (err.expiredAt) {
+                    res.json({message: "Your token expired!"});
+                } else {
+                    res.json({message: "Decoding error!"});
+                }
+            } else {
+                res.json({email: decoded.email})
+            }
+        });
+    } else {
+        res.json({ message: "Missing token!" });
+    }
+})
+
 router.post("/event", checkAuthorization, async (req, res) => {
 
     let new_event = {
