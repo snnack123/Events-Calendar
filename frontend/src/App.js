@@ -32,6 +32,7 @@ function App() {
               .then(res => {
                 if(res.message) {
                   alert(res.message);
+                  localStorage.removeItem('token');
                 } else {
                   dispatch({ type: 'users/loggedIn', payload: true });
                   setTest(true);
