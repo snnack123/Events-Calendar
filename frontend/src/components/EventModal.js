@@ -48,7 +48,7 @@ export default function EventModal() {
       fetch(url_events + "event/" + selectedEvent.id, requestParameters).then(
         (res) =>
           res.json().then((res) => {
-            if ( res.message === "Decoding error!" || res.message === "Your token expired!"
+            if (res.message === "Decoding error!" || res.message === "Your token expired!"
             ) {
               console.log("Problems with token!");
               document.getElementById("error_msg").innerHTML = "Problems with token! Login again!";
@@ -79,7 +79,7 @@ export default function EventModal() {
 
         fetch(url_events + "event", requestParameters).then((res) =>
           res.json().then((res) => {
-            if ( res.message === "Decoding error!" || res.message === "Your token expired!") {
+            if (res.message === "Decoding error!" || res.message === "Your token expired!") {
               console.log("Problems with token!");
               document.getElementById("error_msg").innerHTML = "Problems with token! Login again!";
               document.getElementById("error_msg").style.color = "tomato";

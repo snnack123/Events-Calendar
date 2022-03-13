@@ -117,15 +117,16 @@ const Register = () => {
             <h1>User account registration</h1>
             <p style={{ textAlign: 'left', fontSize: '90%' }}>All fields marked with <span className="star">*</span> are mandatory</p>
             <form onSubmit={register} id='registerUser'>
-                <label>Full name<span className="star">*</span>:</label>
+                <label for='userName'>Full name<span className="star">*</span>:</label>
                 <input
                     type='text'
                     required
                     value={name}
                     name='name'
+                    id='userName'
                     onChange={(e) => setName(e.target.value)}
                 />
-                <label>Years old<span className="star">*</span>:</label>
+                <label for='years_old'>Years old<span className="star">*</span>:</label>
                 <input
                     type='text'
                     required
@@ -133,15 +134,16 @@ const Register = () => {
                     value={yearsOld}
                     onChange={(e) => setYearsOld(e.target.value)}
                 />
-                <label>Email<span className="star">*</span>:</label>
+                <label for='userEmail'>Email<span className="star">*</span>:</label>
                 <input
                     type='email'
                     required
                     value={email}
                     name='email'
+                    id='userEmail'
                     onChange={(e) => setEmail(e.target.value)}
                 />
-                <label>Password<span className="star">*</span>:</label>
+                <label for='userPassword'>Password<span className="star">*</span>:</label>
                 <br></br>
                 <ul style={{ textAlign: 'left', fontSize: '85%', fontWeight: 'bold' }}>
                     <li id='passLength'>Between 6 - 20 characters</li>
@@ -150,13 +152,15 @@ const Register = () => {
                 </ul>
                 <input
                     type='password'
+                    id='userPassword'
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <label>Repeat password<span className="star">*</span>:</label>
+                <label for='userRepeatPassword'>Repeat password<span className="star">*</span>:</label>
                 <input
                     type='password'
+                    id='userRepeatPassword'
                     required
                     value={passwordAgain}
                     onChange={(e) => setPasswordAgain(e.target.value)}
